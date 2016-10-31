@@ -2,6 +2,7 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.graphics import *
+from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.vector import Vector
 
@@ -65,10 +66,27 @@ class Game(Widget):
             print('game over')
 
 
+class Menu(Widget):
+    def __init__(self, **kwargs):
+        super(Menu, self).__init__(**kwargs)
+        self.start_button = Button(text='Start a Game',
+                                   font_size=self.width*0.1)
+        self.start_button.size = (self.width*0.6, self.height*0.2)
+        self.start_button.center_x = self.center_x
+        self.start_button.center_y = self.center_y
+        self.start_button.bind(on_press=self.start_btn_cb)
+        self.add_widget(self.start_button)
+
+    def start_btn_cb(self, instance):
+        print('button clicked')
+
+
+
 class WallBreakerApp(App):
     def build(self):
-        game = Game(size=Window.size)
-        return game
+        # game = Game(size=Window.size)
+        menu = Menu(size=Window.size)
+        return menu
 
 if __name__ == '__main__':
     WallBreakerApp().run()
