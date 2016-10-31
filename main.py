@@ -55,6 +55,9 @@ class Game(Widget):
 
     def update(self, dt):
         self.ball.move()
+        #Bouncing Ball
+        if self.ball.y > self.height - self.ball.height:
+            self.ball.velocity.y *= -1
 
 
 class WallBreakerApp(App):
