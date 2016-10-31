@@ -9,7 +9,7 @@ from kivy.vector import Vector
 class Ball(Widget):
     def __init__(self, center, **kwargs):
         super(Ball, self).__init__(**kwargs)
-        self.velocity = Vector(1, 1)
+        self.velocity = Vector(5, 5)
         self.pos = center
         with self.canvas:
             Color(rgba=(1, 0, 1, .8))
@@ -55,6 +55,14 @@ class Game(Widget):
 
     def update(self, dt):
         self.ball.move()
+        #Bouncing Ball
+        if self.ball.y > self.height - self.ball.height:
+            self.ball.velocity.y *= -1
+        if self.ball.x < 0 or self.ball.x > self.width - self.ball.width:
+            self.ball.velocity.x *= -1
+        if self.ball.y < 0 - self.ball.height:
+            self.remove_widget(self.ball)
+            print('game over')
 
 
 class WallBreakerApp(App):
