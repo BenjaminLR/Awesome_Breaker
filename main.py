@@ -47,6 +47,7 @@ class Paddle(Widget):
 class Game(Widget):
     def __init__(self, **kwargs):
         super(Game, self).__init__(**kwargs)
+        self.size = Window.size
         self.paddle = Paddle(self.center_x)
         self.add_widget(self.paddle)
         self.ball = Ball(self.center)
@@ -73,12 +74,13 @@ class Game(Widget):
         parent = self.parent
         print(parent)
         parent.remove_widget(self)
-        parent.add_widget(Menu(size=Window.size))
+        parent.add_widget(Menu())
 
 
 class Menu(Widget):
     def __init__(self, **kwargs):
         super(Menu, self).__init__(**kwargs)
+        self.size = Window.size
         self.start_button = Button(text='Start a Game',
                                    font_size=self.width*0.1)
         self.start_button.size = (self.width*0.6, self.height*0.2)
@@ -90,14 +92,14 @@ class Menu(Widget):
     def start_btn_cb(self, instance):
         parent = self.parent
         parent.remove_widget(self)
-        parent.add_widget(Game(size=Window.size))
+        parent.add_widget(Game())
 
 
 
 class WallBreakerApp(App):
     def build(self):
         top = Widget(size=Window.size)
-        menu = Menu(size=top.size)
+        menu = Menu()
         top.add_widget(menu)
         return top
 
