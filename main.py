@@ -55,8 +55,17 @@ class Game(Widget):
 
         Clock.schedule_interval(self.update, 1.0/60.0)
 
+    def bounce_ball_paddle(self):
+        if self.ball.y >= self.paddle.top:
+            self.ball.velocity.y *= -1
+        else:
+            self.ball.velocity.x *= -1
+
     def update(self, dt):
         self.ball.move()
+        #Bouncing Paddle
+        if self.ball.collide_widget(self.paddle):
+            self.bounce_ball_paddle()
         #Bouncing Ball
         if self.ball.y > self.height - self.ball.height:
             self.ball.velocity.y *= -1
@@ -64,17 +73,20 @@ class Game(Widget):
             self.ball.velocity.x *= -1
         if self.ball.y < 0 - self.ball.height:
             Clock.unschedule(self.update) # sleep the loop
-            self.game_over()
+            self.end_game()
+        ##########################################
+        #Dont implement any logic after this line#
+        ##########################################
 
-    def game_over(self):
+    def end_game(self):
         self.remove_widget(self.ball)
         self.remove_widget(self.paddle)
         del self.ball
         del self.paddle
         parent = self.parent
-        print(parent)
         parent.remove_widget(self)
         parent.add_widget(Menu())
+        del self
 
 
 class Menu(Widget):
