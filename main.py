@@ -62,8 +62,18 @@ class Game(Widget):
         if self.ball.x < 0 or self.ball.x > self.width - self.ball.width:
             self.ball.velocity.x *= -1
         if self.ball.y < 0 - self.ball.height:
-            self.remove_widget(self.ball)
-            print('game over')
+            Clock.unschedule(self.update) # sleep the loop
+            self.game_over()
+
+    def game_over(self):
+        self.remove_widget(self.ball)
+        self.remove_widget(self.paddle)
+        del self.ball
+        del self.paddle
+        parent = self.parent
+        print(parent)
+        parent.remove_widget(self)
+        parent.add_widget(Menu(size=Window.size))
 
 
 class Menu(Widget):
@@ -78,15 +88,18 @@ class Menu(Widget):
         self.add_widget(self.start_button)
 
     def start_btn_cb(self, instance):
-        print('button clicked')
+        parent = self.parent
+        parent.remove_widget(self)
+        parent.add_widget(Game(size=Window.size))
 
 
 
 class WallBreakerApp(App):
     def build(self):
-        # game = Game(size=Window.size)
-        menu = Menu(size=Window.size)
-        return menu
+        top = Widget(size=Window.size)
+        menu = Menu(size=top.size)
+        top.add_widget(menu)
+        return top
 
 if __name__ == '__main__':
     WallBreakerApp().run()
