@@ -86,11 +86,23 @@ class Game(Widget):
         else:
             self.ball.velocity.x *= -1
 
+    def bounce_ball_wall(self, a_wall):
+        if self.ball.center_y < a_wall.y or self.ball.center_y > a_wall.top:
+            self.ball.velocity.y *= -1
+        else:
+            self.ball.velocity.x *= -1
+
     def update(self, dt):
         self.ball.update()
         #Bouncing Paddle
         if self.ball.collide_widget(self.paddle):
             self.bounce_ball_paddle()
+        #Boucing Wall
+        for wall in self.wall.children:
+            if self.ball.collide_widget(wall):
+                self.bounce_ball_wall(wall)
+                self.wall.remove_widget(wall)
+                del wall
         #Bouncing Ball
         if self.ball.y > self.height - self.ball.height:
             self.ball.velocity.y *= -1
@@ -106,8 +118,10 @@ class Game(Widget):
     def end_game(self):
         self.remove_widget(self.ball)
         self.remove_widget(self.paddle)
+        self.remove_widget(self.wall)
         del self.ball
         del self.paddle
+        del self.wall
         parent = self.parent
         parent.remove_widget(self)
         parent.add_widget(Menu())
