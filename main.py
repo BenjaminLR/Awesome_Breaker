@@ -13,7 +13,7 @@ class Ball(Widget):
         self.velocity = Vector(5, 5)
         self.served_ball = False
         with self.canvas:
-            Color(rgba=(1, 0, 1, .8))
+            Color(rgba=(0, 1, 1, 1))
             Ellipse(size=(100, 100), pos=self.pos)
 
     def on_touch_down(self, touch):
@@ -25,7 +25,7 @@ class Ball(Widget):
             self.y += self.velocity.y
             self.canvas.clear()
             with self.canvas:
-                Color(rgba=(1, 0, 1, 1))
+                Color(rgba=(0, 1, 1, 1))
                 Ellipse(size=(100, 100), pos=(self.x, self.y))
 
 
@@ -48,6 +48,25 @@ class Paddle(Widget):
             Rectangle(size=self.size, pos=self.pos)
 
 
+class Piece(Widget):
+    def __init__(self, **kwargs):
+        super(Piece, self).__init__(**kwargs)
+        self.size = (150, 50)
+        self.inner_size = (148, 48)
+        self.inner_pos = (self.x + 1, self.y + 1)
+        with self.canvas:
+            Color(rgba=(.8, .3, .1, 1))
+            Rectangle(size=self.inner_size, pos=self.inner_pos)
+
+
+class Wall(Widget):
+    def __init__(self, **kwargs):
+        super(Wall, self).__init__(**kwargs)
+        for i in range(3):
+            self.add_widget(Piece(pos=(150*i, 400)))
+
+
+
 class Game(Widget):
     def __init__(self, **kwargs):
         super(Game, self).__init__(**kwargs)
@@ -56,6 +75,8 @@ class Game(Widget):
         self.add_widget(self.paddle)
         self.ball = Ball(pos=(self.paddle.x, self.paddle.top+5))
         self.add_widget(self.ball)
+        self.wall = Wall()
+        self.add_widget(self.wall)
 
         Clock.schedule_interval(self.update, 1.0/60.0)
 
