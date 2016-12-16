@@ -62,8 +62,10 @@ class Piece(Widget):
 class Wall(Widget):
     def __init__(self, **kwargs):
         super(Wall, self).__init__(**kwargs)
+        self.count = 0
         for i in range(3):
             self.add_widget(Piece(pos=(150*i, 400)))
+            self.count += 1
 
 
 
@@ -93,29 +95,35 @@ class Game(Widget):
             self.ball.velocity.x *= -1
 
     def update(self, dt):
-        self.ball.update()
-        #Bouncing Paddle
-        if self.ball.collide_widget(self.paddle):
-            self.bounce_ball_paddle()
-        #Boucing Wall
-        for wall in self.wall.children:
-            if self.ball.collide_widget(wall):
-                self.bounce_ball_wall(wall)
-                self.wall.remove_widget(wall)
-                del wall
-        #Bouncing Ball
-        if self.ball.y > self.height - self.ball.height:
-            self.ball.velocity.y *= -1
-        if self.ball.x < 0 or self.ball.x > self.width - self.ball.width:
-            self.ball.velocity.x *= -1
-        if self.ball.y < 0 - self.ball.height:
+        if self.wall.count == 0:
+            print("no more walls")
             Clock.unschedule(self.update) # sleep the loop
-            self.end_game()
+            self.end_game("Restart a Game")
+        else:
+            self.ball.update()
+            #Bouncing Paddle
+            if self.ball.collide_widget(self.paddle):
+                self.bounce_ball_paddle()
+            #Boucing Wall
+            for wall in self.wall.children:
+                if self.ball.collide_widget(wall):
+                    self.wall.count -= 1
+                    self.bounce_ball_wall(wall)
+                    self.wall.remove_widget(wall)
+                    del wall
+            #Bouncing Ball
+            if self.ball.y > self.height - self.ball.height:
+                self.ball.velocity.y *= -1
+            if self.ball.x < 0 or self.ball.x > self.width - self.ball.width:
+                self.ball.velocity.x *= -1
+            if self.ball.y < 0 - self.ball.height:
+                Clock.unschedule(self.update) # sleep the loop
+                self.end_game("Restart a Game")
         ##########################################
         #Dont implement any logic after this line#
         ##########################################
 
-    def end_game(self):
+    def end_game(self, a_text):
         self.remove_widget(self.ball)
         self.remove_widget(self.paddle)
         self.remove_widget(self.wall)
@@ -124,16 +132,18 @@ class Game(Widget):
         del self.wall
         parent = self.parent
         parent.remove_widget(self)
-        parent.add_widget(Menu())
+        parent.add_widget(Menu(a_text))
         del self
 
 
+
 class Menu(Widget):
-    def __init__(self, **kwargs):
+    def __init__(self, text, **kwargs):
         super(Menu, self).__init__(**kwargs)
+        self.text = text
         self.size = Window.size
-        self.start_button = Button(text='Start a Game',
-                                   font_size=self.width*0.1)
+        self.start_button = Button(text=self.text,
+                                   font_size=self.width*0.08)
         self.start_button.size = (self.width*0.6, self.height*0.2)
         self.start_button.center_x = self.center_x
         self.start_button.center_y = self.center_y
@@ -150,7 +160,7 @@ class Menu(Widget):
 class WallBreakerApp(App):
     def build(self):
         top = Widget(size=Window.size)
-        menu = Menu()
+        menu = Menu("Start A Game")
         top.add_widget(menu)
         return top
 
