@@ -132,13 +132,13 @@ class Game(Widget):
         del self.wall
         parent = self.parent
         parent.remove_widget(self)
-        parent.add_widget(Menu(a_text))
+        parent.add_widget(Menu(text=a_text))
         del self
 
 
 
 class Menu(Widget):
-    def __init__(self, text, **kwargs):
+    def __init__(self, text="", **kwargs):
         super(Menu, self).__init__(**kwargs)
         self.text = text
         self.size = Window.size
@@ -160,7 +160,7 @@ class Menu(Widget):
 class WallBreakerApp(App):
     def build(self):
         top = Widget(size=Window.size)
-        menu = Menu("Start A Game")
+        menu = Menu(text="Start A Game")
         top.add_widget(menu)
         return top
 
